@@ -60,12 +60,28 @@ def catalog_age_stats(movies: list, current_year: int=2026) -> tuple:
         raise ValueError
         
     return oldest, newest, ceil(age_sum/count)
-            
 
 def duration_in_hours(minutes: int) -> str:
     if minutes < 0:
         raise ValueError
     return f"{minutes // 60}ч {minutes % 60}м"
+
+def rating_tier(rating: float) -> str:
+    if rating >= 9:
+        return "шедевр"
+    elif rating >= 7:
+        return "хорошо"
+    else:
+        return "средне" if rating >= 5 else "слабо"
+
+def decade_label(year: int) -> str:
+    match year:
+        case _ if year > 2020:
+            return "новые"
+        case _ if 2015 <= year <= 2020:
+            return "недавние"
+        case _:
+            return "старые"
 
 def main():
     print("Hello from hw1!")
@@ -74,6 +90,8 @@ def main():
     print("Durations:")
     for movie in movies:
         print(f"{movie["title"]} {duration_in_hours(movie["duration_min"])}")
+    print(f"{rating_tier(10)=}")
+    print(f"{decade_label(1969)=}")
 
 
 if __name__ == "__main__":

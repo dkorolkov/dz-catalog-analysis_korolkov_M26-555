@@ -1,6 +1,12 @@
 import unittest
 
-from catalog_analysis import average_rating, catalog_age_stats, duration_in_hours
+from catalog_analysis import (
+    average_rating,
+    catalog_age_stats,
+    decade_label,
+    duration_in_hours,
+    rating_tier,
+)
 
 
 class DurHoursTestCase(unittest.TestCase):
@@ -14,7 +20,7 @@ class DurHoursTestCase(unittest.TestCase):
     def test_negative_value(self):
         with self.assertRaises(ValueError):
             duration_in_hours(-1)
-    
+
 class AverageRatingTestCase(unittest.TestCase):
     def test_average_rating_one_item(self):
         movies = [
@@ -109,6 +115,33 @@ class AgeStatsTestCase(unittest.TestCase):
         ]
         with self.assertRaises(ValueError):
             catalog_age_stats(movies, 2017)
+
+
+class RatingTierTestCase(unittest.TestCase):
+    def test_rating_tier(self):
+        self.assertEqual(rating_tier(9.1), "шедевр")
+        self.assertEqual(rating_tier(9), "шедевр")
+        self.assertEqual(rating_tier(8.9), "хорошо")
+        self.assertEqual(rating_tier(7.5), "хорошо")
+        self.assertEqual(rating_tier(7), "хорошо")
+        self.assertEqual(rating_tier(6.9), "средне")
+        self.assertEqual(rating_tier(5.5), "средне")
+        self.assertEqual(rating_tier(5), "средне")
+        self.assertEqual(rating_tier(4.9), "слабо")
+        self.assertEqual(rating_tier(1), "слабо")
+        self.assertEqual(rating_tier(0), "слабо")
+
+
+class DecadeLabelTestCase(unittest.TestCase):
+    def test_decade_label(self):
+        self.assertEqual(decade_label(2026), "новые")
+        self.assertEqual(decade_label(2021), "новые")
+        self.assertEqual(decade_label(2020), "недавние")
+        self.assertEqual(decade_label(2017), "недавние")
+        self.assertEqual(decade_label(2015), "недавние")
+        self.assertEqual(decade_label(2014), "старые")
+        self.assertEqual(decade_label(1980), "старые")
+
 
 if __name__ == '__main__':
     unittest.main()
