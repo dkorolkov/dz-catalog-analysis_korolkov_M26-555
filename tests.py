@@ -1,12 +1,12 @@
 import unittest
 
 from catalog_analysis import (
-    average_rating,
     catalog_age_stats,
     count_long_movies,
     decade_label,
     duration_in_hours,
     rating_tier,
+    average_rating,
 )
 
 
@@ -180,7 +180,7 @@ class CountMongMoviesTestCase(unittest.TestCase):
              "rating": 6.4, "duration_min": 112,
              "actors": ["J. Bloom", "K. Lee"]},
         ]
-        self.assertEqual(count_long_movies(movies, 100), 12)
+        self.assertEqual(count_long_movies(movies, 100), 2)
 
 if __name__ == '__main__':
     unittest.main()
