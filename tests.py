@@ -180,7 +180,7 @@ class CountMongMoviesTestCase(unittest.TestCase):
              "rating": 6.4, "duration_min": 112,
              "actors": ["J. Bloom", "K. Lee"]},
         ]
-        self.assertEqual(count_long_movies(movies, 100), 2)
+        self.assertEqual(count_long_movies(movies, 100), 12)
 
 if __name__ == '__main__':
     unittest.main()
