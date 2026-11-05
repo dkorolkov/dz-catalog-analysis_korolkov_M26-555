@@ -3,6 +3,7 @@ import unittest
 from catalog_analysis import (
     average_rating,
     catalog_age_stats,
+    count_long_movies,
     decade_label,
     duration_in_hours,
     rating_tier,
@@ -142,6 +143,44 @@ class DecadeLabelTestCase(unittest.TestCase):
         self.assertEqual(decade_label(2014), "старые")
         self.assertEqual(decade_label(1980), "старые")
 
+
+class CountMongMoviesTestCase(unittest.TestCase):
+    def test_count_long_movies_empty_list(self):
+        self.assertEqual(count_long_movies([]), 0)
+
+    def test_count_long_movies_default_threshold(self):
+        movies = [
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+        ]
+        self.assertEqual(count_long_movies(movies), 1)
+
+    def test_count_long_movies_specified_threshold(self):
+        movies = [
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+        ]
+        self.assertEqual(count_long_movies(movies, 100), 2)
 
 if __name__ == '__main__':
     unittest.main()

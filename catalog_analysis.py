@@ -82,6 +82,32 @@ def decade_label(year: int) -> str:
             return "недавние"
         case _:
             return "старые"
+            
+def count_long_movies(movies: list, threshold: int=120) -> int:
+    count = 0
+    for movie in movies:
+        dur = movie.get("duration_min", -1)
+        if dur > threshold:
+            count += 1
+            
+    return count
+    
+    
+def print_not_comedy_titles(movies: list):
+    print("Не комедии:")
+    for movie in movies:
+        genres = movie.get("genres", set())
+        if "comedy" in genres:
+            continue
+        print(movie.get("title", "Нет названия"))
+            
+def first_masterpiece(movies: list) -> dict:
+    for movie in movies:
+        if movie.get("rating", -1) > 9:
+            print(f"Найден шедевр: {movie.get("title", "Нет названия")}")
+            break
+    else:
+        print("Шедевров не найдено")
 
 def main():
     print("Hello from hw1!")
@@ -92,6 +118,14 @@ def main():
         print(f"{movie["title"]} {duration_in_hours(movie["duration_min"])}")
     print(f"{rating_tier(10)=}")
     print(f"{decade_label(1969)=}")
+    print_not_comedy_titles(movies)
+    first_masterpiece(movies)
+    first_masterpiece([
+    {"title": "The Dune Chronicles", "year": 2021, "genres": {"sci-fi", "drama"},
+     "rating": 8.6, "duration_min": 155,
+     "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]}
+     ])
+    print(f"Длинных фильмов: {count_long_movies(movies)}")
 
 
 if __name__ == "__main__":
