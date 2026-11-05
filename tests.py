@@ -1,12 +1,12 @@
 import unittest
 
 from catalog_analysis import (
+    average_rating,
     catalog_age_stats,
     count_long_movies,
     decade_label,
     duration_in_hours,
     rating_tier,
-    average_rating,
 )
 
 
