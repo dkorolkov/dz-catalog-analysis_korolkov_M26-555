@@ -1,8 +1,11 @@
 import unittest
 
 from catalog_analysis import (
+    above_average,
+    actor_filmography,
     average_rating,
     catalog_age_stats,
+    count_by_genre,
     count_long_movies,
     decade_label,
     duration_in_hours,
@@ -320,5 +323,93 @@ class TopNByRatingTestCase(unittest.TestCase):
          ("Kitchen Stories", 7.1),
         ])
 
+
+class CountByGenreTestCase(unittest.TestCase):
+    def test_count_by_genre_empty_list(self):
+        self.assertEqual(count_by_genre([]), {})
+
+    def test_count_by_genre(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+        ]
+        self.assertEqual(count_by_genre(movies), {
+            "comedy": 1,
+            "drama": 3,
+            "sci-fi": 1,
+            "thriller": 1,
+        })
+
+
+class ActorFilmographyTestCase(unittest.TestCase):
+    def test_actor_filmography_empty_list(self):
+        self.assertEqual(actor_filmography([]), {})
+
+    def test_actor_filmography(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(actor_filmography(movies), {
+            "A. Novak": ["Kitchen Stories", "The Last Bakery"],
+            "J. Bloom": ["silent hours"],
+            "K. Lee": ["silent hours"],
+            "M. Ferguson": ["Kitchen Stories"],
+            "O. Isaac": ["The Dune Chronicles"],
+            "R. Ferguson": ["The Dune Chronicles"],
+            "T. Chalamet": ["The Dune Chronicles", "The Last Bakery"],
+        })
+
+
+class AboveAverageTestCase(unittest.TestCase):
+    def test_above_average_empty_list(self):
+        self.assertEqual(above_average([]), {})
+
+    def test_above_average(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(above_average(movies), {
+            "The Dune Chronicles": 8.6,
+            "The Last Bakery": 7.8,
+        })
+    
 if __name__ == '__main__':
     unittest.main()

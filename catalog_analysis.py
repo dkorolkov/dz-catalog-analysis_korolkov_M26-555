@@ -141,6 +141,39 @@ def top_n_by_rating(movies: list, n: int=3) -> list:
         n -= 1
         
     return result
+    
+def count_by_genre(movies: list) -> dict:
+    cnt_genre = {}
+    for movie in movies:
+        for genre in movie.get("genres", []):
+            count = cnt_genre.get(genre, 0)
+            cnt_genre[genre] = count + 1
+            
+    return cnt_genre
+    
+def actor_filmography(movies: list) -> dict:
+    filmography = {}
+    for movie in movies:
+        title = movie.get("title")
+        if title is None:
+            break
+        for actor in movie.get("actors", []):
+            if actor in filmography:
+                filmography[actor].append(title)
+            else:
+                filmography[actor] = [title]
+            
+    return filmography
+    
+def above_average(movies: list) -> dict:
+    if not movies:
+        return {}
+    
+    average = average_rating(movies)
+    
+    return {movie["title"]: movie["rating"] 
+            for movie in movies
+            if movie["rating"] > average}
 
 def main():
     print("Hello from hw1!")
@@ -164,6 +197,8 @@ def main():
     print("\n".join(titles_sorted_by_rating(movies)))
     for m in top_n_by_rating(movies):
         print(m)
+    print("Выше среднего")
+    print(above_average(movies))
 
 
 if __name__ == "__main__":
