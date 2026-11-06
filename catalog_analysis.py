@@ -119,7 +119,8 @@ def format_report_line(movie: dict) -> str:
     """
     '"The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi'
     """
-    return f'"{movie.get("title", "")}" ({movie.get("year", "")})' +\
+    return f'"{normalize_title(movie.get("title", ""))}"' +\
+           f' ({movie.get("year", "")})' +\
            f' — {movie.get("rating", "")}/10,' +\
            f' {duration_in_hours(movie.get("duration_min", 0))}' +\
            f', жанры: {", ".join(sorted(list(movie.get("genres", []))))}'
@@ -192,43 +193,88 @@ def iter_high_rated(movies: list, min_rating=8.0):
         if movie.get("rating", 0) >= min_rating:
             yield movie 
 
-def main():
-    print("Hello from hw1!")
-    print(f"{average_rating(movies)=}")
-    print(f"{catalog_age_stats(movies)=}")
-    print("Durations:")
-    for movie in movies:
-        print(f"{movie["title"]} {duration_in_hours(movie["duration_min"])}")
-    print(f"{rating_tier(10)=}")
-    print(f"{decade_label(1969)=}")
-    print_not_comedy_titles(movies)
-    first_masterpiece(movies)
-    first_masterpiece([
-    {"title": "The Dune Chronicles", "year": 2021, "genres": {"sci-fi", "drama"},
-     "rating": 8.6, "duration_min": 155,
-     "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]}
-     ])
-    print(f"Длинных фильмов: {count_long_movies(movies)}")
-    print(format_report_line(movies[0]))
-    print(format_report_line(movies[7]))
-    print("\n".join(titles_sorted_by_rating(movies)))
-    for m in top_n_by_rating(movies):
-        print(m)
-    print("Выше среднего:")
-    print(above_average(movies))
-    print(f"Все жанры: {all_genres(movies)}")
-    print(f"{common_actors(movies[1], movies[4])} " +\
-          f"снимались и в {movies[1]["title"]} и в {movies[4]["title"]}")
-    print(f"Жанры {genres_only_in_one(movies[5:], movies[:5])}" +\
-           " есть только во второй части списка")
-    print("Фильмы с рейтингом не меньше 8:")
-    for movie in iter_high_rated(movies):
-        print(format_report_line(movie))
-    print("Суммарная длительность фильмов с рейтингом выше 7:")
-    print(sum(movie.get("duration_min", 0)
-              for movie in movies
-              if movie.get("rating", 0) > 7),
-          "минут")
+def build_report(movies: list):
+    """
+    ОТЧеТ ПО КАТАЛОГУ
+    Средний рейтинг: 7.2
+    Средний возраст фильмов: 8 лет
 
+    Топ-3 фильма:
+      "The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi
+      "Midnight In Oslo" (2020) — 8.9/10, 2ч 4м, жанры: mystery, thriller
+      "The Dune Chronicles" (2021) — 8.6/10, 2ч 35м, жанры: drama, sci-fi
+
+    Фильмов по жанрам:
+      drama — 5
+      comedy — 3
+      sci-fi — 3
+      thriller — 3
+      action — 2
+      mystery — 1
+
+    Все жанры каталога: action, comedy, drama, mystery, sci-fi, thriller
+    """
+    print("ОТЧЁТ ПО КАТАЛОГУ")
+    print(f"Средний рейтинг: {average_rating(movies)}")
+    print(f"Средний возраст фильмов: {catalog_age_stats(movies)[2]} лет")
+    print("\nТоп-3 фильма:")
+    n = 3
+    for movie in sorted(movies,
+                        key=lambda m: m.get("rating", 0),
+                        reverse=True):
+        if n <= 0:
+            break
+        print(format_report_line(movie))
+        n -= 1
+        
+    print("\nФильмов по жанрам:")
+    for genre, count in sorted(count_by_genre(movies).items(),
+                               key=lambda g_c: g_c[1], reverse=True):
+        print(f"{genre} — {count}")
+        
+    print(f"\nВсе жанры каталога: {' '.join(sorted(list(all_genres(movies))))}")
+
+def main():
+    final = True
+    if final:
+        build_report(movies)
+    else:
+        print("Hello from hw1!")
+        print(f"{average_rating(movies)=}")
+        print(f"{catalog_age_stats(movies)=}")
+        print("Durations:")
+        for movie in movies:
+            print(f"{movie["title"]} {duration_in_hours(movie["duration_min"])}")
+        print(f"{rating_tier(10)=}")
+        print(f"{decade_label(1969)=}")
+        print_not_comedy_titles(movies)
+        first_masterpiece(movies)
+        first_masterpiece([
+        {"title": "The Dune Chronicles", "year": 2021, "genres": {"sci-fi", "drama"},
+         "rating": 8.6, "duration_min": 155,
+         "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]}
+         ])
+        print(f"Длинных фильмов: {count_long_movies(movies)}")
+        print(format_report_line(movies[0]))
+        print(format_report_line(movies[7]))
+        print("\n".join(titles_sorted_by_rating(movies)))
+        for m in top_n_by_rating(movies):
+            print(m)
+        print("Выше среднего:")
+        print(above_average(movies))
+        print(f"Все жанры: {all_genres(movies)}")
+        print(f"{common_actors(movies[1], movies[4])} " +\
+              f"снимались и в {movies[1]["title"]} и в {movies[4]["title"]}")
+        print(f"Жанры {genres_only_in_one(movies[5:], movies[:5])}" +\
+               " есть только во второй части списка")
+        print("Фильмы с рейтингом не меньше 8:")
+        for movie in iter_high_rated(movies):
+            print(format_report_line(movie))
+        print("Суммарная длительность фильмов с рейтингом выше 7:")
+        print(sum(movie.get("duration_min", 0)
+                  for movie in movies
+                  if movie.get("rating", 0) > 7),
+              "минут")
+          
 if __name__ == "__main__":
     main()

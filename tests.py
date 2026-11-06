@@ -240,6 +240,13 @@ class FormatReportLineTestCase(unittest.TestCase):
             "actors": ["M. Ferguson", "O. Isaac"]
         }),
         '"The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi')
+        self.assertEqual(format_report_line({
+            "title": "midnight in oslo", "year": 2020,
+            "genres": {"thriller", "mystery"},
+            "rating": 8.9, "duration_min": 124,
+            "actors": ["K. Lee", "R. Ferguson"]
+        }),
+        '"Midnight In Oslo" (2020) — 8.9/10, 2ч 4м, жанры: mystery, thriller')
 
 
 class TitlesSortedByRatingTestCase(unittest.TestCase):
