@@ -10,6 +10,8 @@ from catalog_analysis import (
     make_slug,
     normalize_title,
     rating_tier,
+    titles_sorted_by_rating,
+    top_n_by_rating,
 )
 
 
@@ -214,6 +216,9 @@ class MakeSlugTestCase(unittest.TestCase):
         self.assertEqual(make_slug("Many Words"), "many-words")
         self.assertEqual(make_slug("manY woRds"), "many-words")
         self.assertEqual(make_slug("MANY WORDS"), "many-words")
+        # Для замены последовательности пробелов одним дефисом
+        # потребовалалось бы применить re.replace
+        # или многократное применение str.replace
         self.assertEqual(make_slug("many  words"), "many--words")        
 
 
@@ -228,6 +233,92 @@ class FormatReportLineTestCase(unittest.TestCase):
             "actors": ["M. Ferguson", "O. Isaac"]
         }),
         '"The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi')
+
+
+class TitlesSortedByRatingTestCase(unittest.TestCase):
+    def test_titles_sorted_by_rating_empty_list(self):
+        self.assertEqual(titles_sorted_by_rating([]), [])
+
+    def test_titles_sorted_by_rating(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+        ]
+        self.assertEqual(titles_sorted_by_rating(movies),
+        ["The Dune Chronicles",
+         "Kitchen Stories",
+         "silent hours",
+        ])
+
+
+class top_n_by_ratingTestCase(unittest.TestCase):
+    def test_top_n_by_rating_empty_list(self):
+        self.assertEqual(top_n_by_rating([]), [])
+
+    def test_top_n_by_rating_default_n(self):
+        movies = [
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "Kitchen Stories", "year": 2019, "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98, "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "silent hours", "year": 2016, "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112, "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "Comet Racers", "year": 2023, "genres": {"sci-fi", "action"},
+             "rating": 5.9, "duration_min": 101, "actors": ["O. Isaac", "P. Diaz"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89, "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(top_n_by_rating(movies),
+        [("The Dune Chronicles", 8.6),
+         ("The Last Bakery", 7.8),
+         ("Kitchen Stories", 7.1),
+        ])
+
+    def test_top_n_by_rating_specified_n(self):
+        movies = [
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "Kitchen Stories", "year": 2019, "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98, "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "silent hours", "year": 2016, "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112, "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "Comet Racers", "year": 2023, "genres": {"sci-fi", "action"},
+             "rating": 5.9, "duration_min": 101, "actors": ["O. Isaac", "P. Diaz"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89, "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(top_n_by_rating(movies, 2),
+        [("The Dune Chronicles", 8.6),
+         ("The Last Bakery", 7.8),
+        ])
+
+    def test_top_n_by_rating_n_more_than_list_length(self):
+        movies = [
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "Kitchen Stories", "year": 2019, "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98, "actors": ["A. Novak", "M. Ferguson"]},
+        ]
+        self.assertEqual(top_n_by_rating(movies, 5),
+        [("The Dune Chronicles", 8.6),
+         ("Kitchen Stories", 7.1),
+        ])
 
 if __name__ == '__main__':
     unittest.main()

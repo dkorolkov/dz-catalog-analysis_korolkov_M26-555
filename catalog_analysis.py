@@ -123,6 +123,24 @@ def format_report_line(movie: dict) -> str:
            f' — {movie.get("rating", "")}/10,' +\
            f' {duration_in_hours(movie.get("duration_min", 0))}' +\
            f', жанры: {", ".join(sorted(list(movie.get("genres", []))))}'
+           
+def titles_sorted_by_rating(movies: list) -> list:
+    return [movie.get("title", "")
+            for movie in sorted(movies,
+                                key=lambda m: m.get("rating", 0),
+                                reverse=True)]
+                                
+def top_n_by_rating(movies: list, n: int=3) -> list:
+    result = []
+    for movie in sorted(movies,
+                        key=lambda m: m.get("rating", 0),
+                        reverse=True):
+        if n <= 0:
+            break
+        result.append((movie.get("title", ""), movie.get("rating", 0)))
+        n -= 1
+        
+    return result
 
 def main():
     print("Hello from hw1!")
@@ -143,6 +161,9 @@ def main():
     print(f"Длинных фильмов: {count_long_movies(movies)}")
     print(format_report_line(movies[0]))
     print(format_report_line(movies[7]))
+    print("\n".join(titles_sorted_by_rating(movies)))
+    for m in top_n_by_rating(movies):
+        print(m)
 
 
 if __name__ == "__main__":
