@@ -261,7 +261,7 @@ class TitlesSortedByRatingTestCase(unittest.TestCase):
         ])
 
 
-class top_n_by_ratingTestCase(unittest.TestCase):
+class TopNByRatingTestCase(unittest.TestCase):
     def test_top_n_by_rating_empty_list(self):
         self.assertEqual(top_n_by_rating([]), [])
 
