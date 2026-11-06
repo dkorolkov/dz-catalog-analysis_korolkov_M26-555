@@ -108,6 +108,21 @@ def first_masterpiece(movies: list) -> dict:
             break
     else:
         print("Шедевров не найдено")
+        
+def normalize_title(title: str) -> str:
+    return " ".join(word[0].upper() + word[1:] for word in title.split())
+
+def make_slug(title: str) -> str:
+    return title.lower().replace(" ", "-")
+    
+def format_report_line(movie: dict) -> str:
+    """
+    '"The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi'
+    """
+    return f'"{movie.get("title", "")}" ({movie.get("year", "")})' +\
+           f' — {movie.get("rating", "")}/10,' +\
+           f' {duration_in_hours(movie.get("duration_min", 0))}' +\
+           f', жанры: {", ".join(sorted(list(movie.get("genres", []))))}'
 
 def main():
     print("Hello from hw1!")
@@ -126,6 +141,8 @@ def main():
      "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]}
      ])
     print(f"Длинных фильмов: {count_long_movies(movies)}")
+    print(format_report_line(movies[0]))
+    print(format_report_line(movies[7]))
 
 
 if __name__ == "__main__":

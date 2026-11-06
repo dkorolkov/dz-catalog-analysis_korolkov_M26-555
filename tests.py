@@ -6,6 +6,9 @@ from catalog_analysis import (
     count_long_movies,
     decade_label,
     duration_in_hours,
+    format_report_line,
+    make_slug,
+    normalize_title,
     rating_tier,
 )
 
@@ -181,6 +184,50 @@ class CountMongMoviesTestCase(unittest.TestCase):
              "actors": ["J. Bloom", "K. Lee"]},
         ]
         self.assertEqual(count_long_movies(movies, 100), 2)
+
+
+class NormalizeTitleTestCase(unittest.TestCase):
+    def test_normalize_title(self):
+        self.assertEqual(normalize_title(""), "")
+        self.assertEqual(normalize_title("title"), "Title")
+        self.assertEqual(normalize_title("Title"), "Title")
+        self.assertEqual(normalize_title("titLe"), "TitLe")
+        self.assertEqual(normalize_title("TitlE"), "TitlE")
+        self.assertEqual(normalize_title("many words"), "Many Words")
+        self.assertEqual(normalize_title("Many words"), "Many Words")
+        self.assertEqual(normalize_title("many Words"), "Many Words")
+        self.assertEqual(normalize_title("Many Words"), "Many Words")
+        self.assertEqual(normalize_title("manY woRds"), "ManY WoRds")
+        self.assertEqual(normalize_title("MANY WORDS"), "MANY WORDS")
+
+
+class MakeSlugTestCase(unittest.TestCase):
+    def test_make_slug(self):
+        self.assertEqual(make_slug(""), "")
+        self.assertEqual(make_slug("title"), "title")
+        self.assertEqual(make_slug("Title"), "title")
+        self.assertEqual(make_slug("titLe"), "title")
+        self.assertEqual(make_slug("TitlE"), "title")
+        self.assertEqual(make_slug("many words"), "many-words")
+        self.assertEqual(make_slug("Many words"), "many-words")
+        self.assertEqual(make_slug("many Words"), "many-words")
+        self.assertEqual(make_slug("Many Words"), "many-words")
+        self.assertEqual(make_slug("manY woRds"), "many-words")
+        self.assertEqual(make_slug("MANY WORDS"), "many-words")
+        self.assertEqual(make_slug("many  words"), "many--words")        
+
+
+class FormatReportLineTestCase(unittest.TestCase):
+    def test_format_report_line(self):
+        self.assertEqual(format_report_line({
+            "title": "The Quiet Algorithm",
+            "year": 2024,
+            "genres": {"sci-fi", "drama"},
+            "rating": 9.2,
+            "duration_min": 118,
+            "actors": ["M. Ferguson", "O. Isaac"]
+        }),
+        '"The Quiet Algorithm" (2024) — 9.2/10, 1ч 58м, жанры: drama, sci-fi')
 
 if __name__ == '__main__':
     unittest.main()
