@@ -13,6 +13,7 @@ from catalog_analysis import (
     duration_in_hours,
     format_report_line,
     genres_only_in_one,
+    iter_high_rated,
     make_slug,
     normalize_title,
     rating_tier,
@@ -494,6 +495,77 @@ class GenresOnlyInOneTestCase(unittest.TestCase):
              "actors": ["A. Novak", "T. Chalamet"]},
         ]
         self.assertEqual(genres_only_in_one(movies_a, movies_b), {"sci-fi"})
+
+
+class IterHighRatedTestCase(unittest.TestCase):
+    @staticmethod
+    def _concat_titles(movies_iter):
+        return "\n".join(movie.get("title", "") for movie in movies_iter)
+
+    def test_iter_high_rated_very_empty_list(self):
+        self.assertEqual(self._concat_titles(iter_high_rated([])), "")
+
+    def test_iter_high_rated_very_higth_threshold(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(self._concat_titles(iter_high_rated(movies, 10)), "")
+
+    def test_iter_high_rated_default_threshold(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(self._concat_titles(iter_high_rated(movies)),
+                         "The Dune Chronicles")
+
+    def test_iter_high_rated_specified_threshold(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(self._concat_titles(iter_high_rated(movies, 7.5)),
+                         "The Dune Chronicles\nThe Last Bakery")
 
     
 if __name__ == '__main__':

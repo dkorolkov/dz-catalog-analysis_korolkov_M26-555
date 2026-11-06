@@ -186,6 +186,11 @@ def common_actors(movie1: dict, movie2: dict) -> set:
 
 def genres_only_in_one(movies_a: list, movies_b: list) -> set:
     return all_genres(movies_a) - all_genres(movies_b)
+    
+def iter_high_rated(movies: list, min_rating=8.0):
+    for movie in movies:
+        if movie.get("rating", 0) >= min_rating:
+            yield movie 
 
 def main():
     print("Hello from hw1!")
@@ -216,7 +221,14 @@ def main():
           f"снимались и в {movies[1]["title"]} и в {movies[4]["title"]}")
     print(f"Жанры {genres_only_in_one(movies[5:], movies[:5])}" +\
            " есть только во второй части списка")
-
+    print("Фильмы с рейтингом не меньше 8:")
+    for movie in iter_high_rated(movies):
+        print(format_report_line(movie))
+    print("Суммарная длительность фильмов с рейтингом выше 7:")
+    print(sum(movie.get("duration_min", 0)
+              for movie in movies
+              if movie.get("rating", 0) > 7),
+          "минут")
 
 if __name__ == "__main__":
     main()
