@@ -3,13 +3,16 @@ import unittest
 from catalog_analysis import (
     above_average,
     actor_filmography,
+    all_genres,
     average_rating,
     catalog_age_stats,
+    common_actors,
     count_by_genre,
     count_long_movies,
     decade_label,
     duration_in_hours,
     format_report_line,
+    genres_only_in_one,
     make_slug,
     normalize_title,
     rating_tier,
@@ -410,6 +413,88 @@ class AboveAverageTestCase(unittest.TestCase):
             "The Dune Chronicles": 8.6,
             "The Last Bakery": 7.8,
         })
+
+
+class AllGenresTestCase(unittest.TestCase):
+    def test_all_genres_empty_list(self):
+        self.assertEqual(all_genres([]), set())
+
+    def test_all_genres(self):
+        movies = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(all_genres(movies), {
+            "comedy",
+            "drama",
+            "sci-fi",
+            "thriller",
+        })
+
+
+class CommonActorsTestCase(unittest.TestCase):
+    def test_common_actors_no_common(self):
+        movie1 = {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"],
+            }
+        movie2 = {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"],
+            }
+        self.assertEqual(common_actors(movie1, movie2), set())
+
+    def test_common_actors(self):
+        movie1 = {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]
+            }
+        movie2 = {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"],
+            }
+        self.assertEqual(common_actors(movie1, movie2), {"A. Novak"})
+
+
+class GenresOnlyInOneTestCase(unittest.TestCase):
+    def test_genres_only_in_one(self):
+        movies_a = [
+            {"title": "Kitchen Stories", "year": 2019,
+             "genres": {"comedy", "drama"},
+             "rating": 7.1, "duration_min": 98,
+             "actors": ["A. Novak", "M. Ferguson"]},
+            {"title": "The Dune Chronicles", "year": 2021,
+             "genres": {"sci-fi", "drama"},
+             "rating": 8.6, "duration_min": 155,
+             "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+        ]
+        movies_b = [
+            {"title": "silent hours", "year": 2016,
+             "genres": {"thriller", "drama"},
+             "rating": 6.4, "duration_min": 112,
+             "actors": ["J. Bloom", "K. Lee"]},
+            {"title": "The Last Bakery", "year": 2014, "genres": {"comedy"},
+             "rating": 7.8, "duration_min": 89,
+             "actors": ["A. Novak", "T. Chalamet"]},
+        ]
+        self.assertEqual(genres_only_in_one(movies_a, movies_b), {"sci-fi"})
+
     
 if __name__ == '__main__':
     unittest.main()

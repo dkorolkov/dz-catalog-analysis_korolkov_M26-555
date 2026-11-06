@@ -174,6 +174,18 @@ def above_average(movies: list) -> dict:
     return {movie["title"]: movie["rating"] 
             for movie in movies
             if movie["rating"] > average}
+            
+def all_genres(movies: list) -> set:
+    result = set()
+    for movie in movies:
+        result.update(movie.get("genres", set()))
+    return result
+    
+def common_actors(movie1: dict, movie2: dict) -> set:
+    return set(movie1.get("actors", [])) & set(movie2.get("actors", []))
+
+def genres_only_in_one(movies_a: list, movies_b: list) -> set:
+    return all_genres(movies_a) - all_genres(movies_b)
 
 def main():
     print("Hello from hw1!")
@@ -197,8 +209,13 @@ def main():
     print("\n".join(titles_sorted_by_rating(movies)))
     for m in top_n_by_rating(movies):
         print(m)
-    print("Выше среднего")
+    print("Выше среднего:")
     print(above_average(movies))
+    print(f"Все жанры: {all_genres(movies)}")
+    print(f"{common_actors(movies[1], movies[4])} " +\
+          f"снимались и в {movies[1]["title"]} и в {movies[4]["title"]}")
+    print(f"Жанры {genres_only_in_one(movies[5:], movies[:5])}" +\
+           " есть только во второй части списка")
 
 
 if __name__ == "__main__":
